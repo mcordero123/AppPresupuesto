@@ -1,5 +1,7 @@
 let ingresosHTML="";
+let egresosHTML="";
 let totalIngresos = 0;
+let totalEgresos = 0;
 
 
 let agregarDato = (event) =>{
@@ -13,12 +15,12 @@ let agregarDato = (event) =>{
         console.log("Valor " + valor);
         if (tipo === "ingreso"){
             cargarIngresos(descripcion, Number(valor));
-            document.getElementsById("descripcion").value = "";
-            document.getElementsById("valor").value = "";
+            document.getElementById("descripcion").value = "";
+            document.getElementById("valor").value = "";
         }else if (tipo === "egreso"){
-            cargarIngresos(descripcion, Number(valor));
-            document.getElementsById("descripcion").value = "";
-            document.getElementsById("valor").value = "";
+            cargarEgresos(descripcion, Number(valor));
+            document.getElementById("descripcion").value = "";
+            document.getElementById("valor").value = "";
 
         }
 
@@ -32,7 +34,7 @@ let cargarIngresos = (descripcion, valor) => {
     ingresosHTML += crearIngresosHTML(descripcion, valor);
     totalIngresos += valor;
     document.getElementById("ingresoTotal").textContent = formatearCLP(totalIngresos);
-    document.getElementById("presupuesto").textContent = formatearCLP(totalIngresos);
+    document.getElementById("presupuesto").textContent = formatearCLP(totalIngresos - totalEgresos);
     document.getElementById('lista-ingresos').innerHTML = ingresosHTML;
 
 }
@@ -53,16 +55,17 @@ let crearIngresosHTML = (descripcion, valor) => {
  
 }
 
-let cargarEgresos = (descripcion, valor) => {
-    EgresosHTML -= borrarIngresosHTML(descripcion, valor);
-    totalEgresos -= valor;
-    document.getElementById("egresoTotal").textContent = formatearCLP(totalEgresos);
-    document.getElementById("presupuesto").textContent = formatearCLP(totalEgresos);
-    document.getElementById('lista-egresos').innerHTML = EgresosHTML;
 
+let cargarEgresos = (descripcion, valor) => {
+    egresosHTML += crearEgresosHTML(descripcion, valor);
+    totalEgresos += valor;
+    document.getElementById("egresoTotal").textContent = formatearCLP(totalEgresos);
+    document.getElementById("presupuesto").textContent = formatearCLP(totalIngresos - totalEgresos);
+    document.getElementById('lista-egresos').innerHTML = egresosHTML;
+    document.getElementById("calcular_porcentaje").textContent = ((totalEgresos * 100) / totalIngresos).toFixed(1) + "%";
 }
 
-let borrarIngresosHTML = (descripcion, valor) => {
+let crearEgresosHTML = (descripcion, valor) => {
     return `<div class="elemento limpiarEstilos">
                     <div class="elemento_descripcion">${descripcion}</div>
                     <div class="derecha limpiarEstilos">
@@ -76,6 +79,7 @@ let borrarIngresosHTML = (descripcion, valor) => {
                 </div>`;
 
 }
+
 function formatearCLP(numero) {
     return new Intl.NumberFormat('es-CL', {
         style: 'currency',
